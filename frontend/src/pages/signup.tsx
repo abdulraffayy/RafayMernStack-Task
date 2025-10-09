@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,8 @@ interface FormErrors {
 }
 
 const Signup = () => {
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -63,8 +66,6 @@ const Signup = () => {
   };
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
-    // Full Name validation
     if (!formData.fullName.trim()) {
       newErrors.fullName = "Full name is required";
     } else if (formData.fullName.trim().length < 2) {
@@ -110,7 +111,8 @@ const Signup = () => {
         name: formData.fullName,
         email: formData.email,
       });
-      alert("Signup successful! (Connect to backend API)");
+
+      navigate("/login");
     } catch (error) {
       console.error("Signup error:", error);
      
@@ -138,7 +140,7 @@ const Signup = () => {
                 id="fullName"
                 name="fullName"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={handleChange}
                 aria-invalid={!!errors.fullName}
@@ -252,12 +254,12 @@ const Signup = () => {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-sm text-center text-muted-foreground">
             Already have an account?{" "}
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="text-primary hover:underline font-medium"
             >
               Log in
-            </a>
+            </Link>
           </div>
         </CardFooter>
       </Card>

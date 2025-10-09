@@ -182,7 +182,7 @@ const Signup = () => {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="john.doe@example.com"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
                 aria-invalid={!!errors.email}
@@ -259,7 +259,7 @@ const Signup = () => {
               )}
             </div>
 
-            {/* Submit Button */}
+            
             <Button
               type="submit"
               className="w-full"

@@ -38,20 +38,15 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Validation functions
+  
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
   const validatePassword = (password: string): boolean => {
-    // Min 8 characters, at least one uppercase, one lowercase, one number
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     return passwordRegex.test(password);
   };
-
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -59,7 +54,6 @@ const Signup = () => {
       [name]: value,
     }));
 
-    // Clear error for this field when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({
         ...prev,
@@ -67,8 +61,6 @@ const Signup = () => {
       }));
     }
   };
-
-  // Validate form
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -78,15 +70,11 @@ const Signup = () => {
     } else if (formData.fullName.trim().length < 2) {
       newErrors.fullName = "Name must be at least 2 characters";
     }
-
-    // Email validation
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
-
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
@@ -94,7 +82,7 @@ const Signup = () => {
         "Password must be at least 8 characters with uppercase, lowercase, and number";
     }
 
-    // Confirm Password validation
+   
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
@@ -105,7 +93,7 @@ const Signup = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -116,30 +104,16 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('YOUR_API_ENDPOINT/signup', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     name: formData.fullName,
-      //     email: formData.email,
-      //     password: formData.password,
-      //   }),
-      // });
-
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       console.log("Signup successful:", {
         name: formData.fullName,
         email: formData.email,
       });
-
-      // TODO: Handle successful signup (e.g., redirect to login or dashboard)
       alert("Signup successful! (Connect to backend API)");
     } catch (error) {
       console.error("Signup error:", error);
-      // TODO: Handle error appropriately
+     
     } finally {
       setIsLoading(false);
     }
@@ -257,9 +231,7 @@ const Signup = () => {
                   {errors.confirmPassword}
                 </p>
               )}
-            </div>
-
-            
+            </div>  
             <Button
               type="submit"
               className="w-full"

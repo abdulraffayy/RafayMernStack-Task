@@ -12,11 +12,8 @@ function App() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <Routes>
-          {/* Public Routes */}
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          
-          {/* Protected Routes */}
           <Route 
             path="/" 
             element={

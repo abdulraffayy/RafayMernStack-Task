@@ -2,11 +2,12 @@
 
 ## ✅ Problem Solved!
 
-The issue was that Vercel couldn't find `package.json` at the root of the repository because this is a monorepo structure.
+The issue was that Vercel couldn't find `package.json` at the root of the repository because this is a monorepo structure. Additionally, Vercel was trying to build the backend folder which should be ignored.
 
 **Files Added:**
-- ✅ `/package.json` - Root package file for Vercel
+- ✅ `/package.json` - Root package file for Vercel (frontend only)
 - ✅ `/vercel.json` - Vercel configuration file
+- ✅ `/.vercelignore` - Tells Vercel to ignore backend folder
 
 ---
 
@@ -48,20 +49,23 @@ git push origin main
 ### **`/package.json`**
 ```json
 {
-  "name": "rafay-mernstack-task",
+  "name": "rafay-mernstack-task-frontend",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "install": "cd frontend && npm install",
-    "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm run preview"
-  }
+    "build": "cd frontend && npm install && npm run build"
+  },
+  "workspaces": ["frontend"]
 }
 ```
 - Tells Vercel where to find and build the frontend
+- Uses workspaces to isolate frontend dependencies
 
 ### **`/vercel.json`**
 ```json
 {
   "buildCommand": "cd frontend && npm install && npm run build",
+  "installCommand": "cd frontend && npm install",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
   "rewrites": [
@@ -72,9 +76,18 @@ git push origin main
   ]
 }
 ```
-- Configures Vercel to build from the `frontend` folder
+- Configures Vercel to build from the `frontend` folder only
 - Sets up SPA routing (all routes go to index.html)
 - Optimizes caching for assets
+
+### **`/.vercelignore`**
+```
+backend/
+backend/**
+```
+- Tells Vercel to completely ignore the backend folder
+- Prevents backend dependencies from being installed
+- Avoids permission and build issues with backend code
 
 ---
 

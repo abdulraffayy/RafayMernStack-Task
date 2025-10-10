@@ -99,8 +99,6 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Clear previous messages
     setApiError("");
     setApiSuccess("");
 
@@ -111,27 +109,20 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      // Call the signup API
       const response = await authService.signup({
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
       });
-
-      // Success!
       console.log("Signup successful:", response);
       setApiSuccess(response.message || "Account created successfully!");
-
-      // Wait 1.5 seconds to show success message, then redirect
       setTimeout(() => {
         navigate("/login");
       }, 1500);
 
     } catch (error) {
       console.error("Signup error:", error);
-      
-      // Handle error message
       const errorMessage = (error as { message?: string }).message || "Something went wrong. Please try again.";
       setApiError(errorMessage);
     } finally {
@@ -252,16 +243,12 @@ const Signup = () => {
                 </p>
               )}
             </div>
-
-            {/* API Error Message */}
             {apiError && (
               <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2">
                 <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
                 <p className="text-sm text-red-600 dark:text-red-400">{apiError}</p>
               </div>
             )}
-
-            {/* API Success Message */}
             {apiSuccess && (
               <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in slide-in-from-top-2">
                 <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />

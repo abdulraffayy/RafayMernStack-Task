@@ -3,12 +3,10 @@ import { registerUser, loginUser, getUserProfile } from '../controllers/Usercont
 
 const router = express.Router();
 
-// Public routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-// Protected route (will need auth middleware)
-// router.get('/profile', authMiddleware, getUserProfile);
+
 
 export default router;
 

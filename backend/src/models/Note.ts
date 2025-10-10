@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-// Interface for Note document
 export interface INote extends Document {
   title: string;
   content: string;
@@ -10,7 +9,7 @@ export interface INote extends Document {
   updatedAt: Date;
 }
 
-// Note Schema
+
 const noteSchema = new Schema<INote>({
   title: {
     type: String,
@@ -41,14 +40,13 @@ const noteSchema = new Schema<INote>({
     required: [true, 'User ID is required']
   }
 }, {
-  timestamps: true // Automatically adds createdAt and updatedAt
+  timestamps: true 
 });
 
-// Index for faster queries
 noteSchema.index({ userId: 1, createdAt: -1 });
-noteSchema.index({ title: 'text', content: 'text', tags: 'text' }); // Text search index
+noteSchema.index({ title: 'text', content: 'text', tags: 'text' }); 
 
-// Create and export the Note model
+
 const Note = mongoose.model<INote>('Note', noteSchema);
 
 export default Note;

@@ -21,6 +21,8 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  
+
 
   useEffect(() => {
     if (editNote) {
@@ -30,7 +32,8 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
     } else {
       setTitle("");
       setContent("");
-      setTags([]);
+      
+      setTags(["important", "work", "personal"]);
     }
     setTagInput("");
   }, [editNote, open]);
@@ -54,6 +57,8 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
     }
   };
 
+ 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
@@ -72,7 +77,7 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Title */}
+        
           <div className="space-y-2">
             <Label htmlFor="title">Title *</Label>
             <Input
@@ -84,8 +89,6 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
               disabled={isLoading}
             />
           </div>
-
-          {/* Content */}
           <div className="space-y-2">
             <Label htmlFor="content">Content *</Label>
             <Textarea
@@ -98,8 +101,6 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
               disabled={isLoading}
             />
           </div>
-
-          {/* Tags */}
           <div className="space-y-2">
             <Label htmlFor="tags">Tags</Label>
             <div className="flex gap-2">
@@ -138,9 +139,8 @@ const NoteModal = ({ open, onOpenChange, onSave, editNote, isLoading }: NoteModa
                 ))}
               </div>
             )}
+            
           </div>
-
-          {/* Actions */}
           <div className="flex gap-2 justify-end pt-4">
             <Button
               type="button"

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Note from '../models/Note';
 
-// Get all notes for logged-in user
+
 export const getAllNotes = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
@@ -25,7 +25,7 @@ export const getAllNotes = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Get single note by ID
+
 export const getNoteById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -56,13 +56,12 @@ export const getNoteById = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Create new note
+
 export const createNote = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, content, tags } = req.body;
     const userId = req.userId;
 
-    // Validation
     if (!title || !content) {
       res.status(400).json({
         success: false,
@@ -71,7 +70,7 @@ export const createNote = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // Create note
+    
     const note = await Note.create({
       title,
       content,
@@ -94,14 +93,13 @@ export const createNote = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-// Update note
+
 export const updateNote = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { title, content, tags } = req.body;
     const userId = req.userId;
 
-    // Find note and verify ownership
     const note = await Note.findOne({ _id: id, userId });
 
     if (!note) {
@@ -112,7 +110,7 @@ export const updateNote = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // Update note
+  
     if (title !== undefined) note.title = title;
     if (content !== undefined) note.content = content;
     if (tags !== undefined) note.tags = tags;
@@ -134,13 +132,11 @@ export const updateNote = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-// Delete note
+
 export const deleteNote = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const userId = req.userId;
-
-    // Find and delete note
     const note = await Note.findOneAndDelete({ _id: id, userId });
 
     if (!note) {
@@ -164,8 +160,6 @@ export const deleteNote = async (req: Request, res: Response): Promise<void> => 
     });
   }
 };
-
-// Search notes
 export const searchNotes = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
@@ -179,7 +173,7 @@ export const searchNotes = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Search using text index or regex
+   
     const notes = await Note.find({
       userId,
       $or: [

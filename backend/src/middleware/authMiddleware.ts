@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-// Extend Express Request type to include userId
+
 declare global {
   namespace Express {
     interface Request {
@@ -16,7 +16,7 @@ interface JwtPayload {
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // Get token from header
+   
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -26,9 +26,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
       });
       return;
     }
-
-    // Extract token
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const token = authHeader.substring(7);
 
     if (!token) {
       res.status(401).json({

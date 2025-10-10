@@ -1,6 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
-// Interface for User document
 export interface IUser extends Document {
   fullName: string;
   email: string;
@@ -10,7 +8,6 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
-// User Schema
 const userSchema = new Schema<IUser>({
   fullName: {
     type: String,
@@ -31,7 +28,7 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Don't include password in queries by default
+    select: false 
   },
   confirmPassword: {
     type: String,
@@ -44,10 +41,10 @@ const userSchema = new Schema<IUser>({
     }
   }
 }, {
-  timestamps: true // Automatically adds createdAt and updatedAt
+  timestamps: true 
 });
 
-// Create and export the User model
+
 const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;

@@ -11,16 +11,15 @@ import authMiddleware from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// All routes are protected - require authentication
 router.use(authMiddleware);
 
-// Note routes
-router.get('/', getAllNotes);              // GET /api/notes - Get all notes
-router.get('/search', searchNotes);        // GET /api/notes/search?q=query - Search notes
-router.get('/:id', getNoteById);           // GET /api/notes/:id - Get single note
-router.post('/', createNote);              // POST /api/notes - Create note
-router.put('/:id', updateNote);            // PUT /api/notes/:id - Update note
-router.delete('/:id', deleteNote);         // DELETE /api/notes/:id - Delete note
+
+router.get('/', getAllNotes);             
+router.get('/search', searchNotes);        
+router.get('/:id', getNoteById);           
+router.post('/', createNote);              
+router.put('/:id', updateNote);            
+router.delete('/:id', deleteNote);         
 
 export default router;
 

@@ -9,7 +9,7 @@ const connectDB = async (): Promise<void> => {
 
     const conn = await mongoose.connect(connectionUrl, {
       tls: true,
-      tlsAllowInvalidCertificates: true, // For development - allows self-signed certificates
+      tlsAllowInvalidCertificates: true, 
       retryWrites: true,
       w: "majority",
     });

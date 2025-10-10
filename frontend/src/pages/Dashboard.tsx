@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, Loader2, FileText } from "lucide-react";
 import NoteCard from "@/components/NoteCard";
 import NoteModal from "@/components/NoteModal";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import noteService from "@/services/noteService";
 import type { Note } from "@/services/noteService";
 
@@ -16,13 +17,17 @@ const Dashboard = () => {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  
 
-  // Fetch all notes on component mount
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletingNote, setDeletingNote] = useState<Note | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  // Filter notes based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredNotes(notes);
@@ -69,7 +74,6 @@ const Dashboard = () => {
 
     try {
       if (editingNote) {
-        // Update existing note
         await noteService.updateNote(editingNote._id, data);
       } else {
         // Create new note
@@ -78,7 +82,7 @@ const Dashboard = () => {
       
       setIsModalOpen(false);
       setEditingNote(null);
-      await fetchNotes(); // Refresh notes list
+      await fetchNotes(); 
     } catch (err) {
       console.error("Failed to save note:", err);
       setError((err as { message?: string }).message || "Failed to save note. Please try again.");
@@ -87,24 +91,36 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteNote = async (noteId: string) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) {
-      return;
+  const handleDeleteNote = (noteId: string) => {
+    const noteToDelete = notes.find(note => note._id === noteId);
+    if (noteToDelete) {
+      setDeletingNote(noteToDelete);
+      setIsDeleteDialogOpen(true);
     }
+  };
+
+  const confirmDeleteNote = async () => {
+    if (!deletingNote) return;
+
+    setIsDeleting(true);
+    setError("");
 
     try {
-      await noteService.deleteNote(noteId);
-      await fetchNotes(); // Refresh notes list
+      await noteService.deleteNote(deletingNote._id);
+      setIsDeleteDialogOpen(false);
+      setDeletingNote(null);
+      await fetchNotes(); 
     } catch (err) {
       console.error("Failed to delete note:", err);
       setError((err as { message?: string }).message || "Failed to delete note. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Notes</h1>
@@ -117,8 +133,6 @@ const Dashboard = () => {
             Create Note
           </Button>
         </div>
-
-        {/* Search Bar */}
         <div className="mb-8">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -131,22 +145,20 @@ const Dashboard = () => {
             />
           </div>
         </div>
-
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
 
-        {/* Loading State */}
+
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
             <p className="text-gray-600 dark:text-gray-400">Loading your notes...</p>
           </div>
         ) : filteredNotes.length === 0 ? (
-          /* Empty State */
+        
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <FileText className="h-16 w-16 text-gray-400 mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -165,7 +177,7 @@ const Dashboard = () => {
             )}
           </div>
         ) : (
-          /* Notes Grid */
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredNotes.map((note) => (
               <NoteCard
@@ -177,14 +189,20 @@ const Dashboard = () => {
             ))}
           </div>
         )}
-
-        {/* Note Modal */}
         <NoteModal
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
           onSave={handleSaveNote}
           editNote={editingNote}
           isLoading={isSubmitting}
+        />
+        <DeleteConfirmDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={confirmDeleteNote}
+          noteId={deletingNote?._id || ""}
+          noteTitle={deletingNote?.title || ""}
+          isDeleting={isDeleting}
         />
       </div>
     </div>

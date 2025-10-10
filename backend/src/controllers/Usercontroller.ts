@@ -3,12 +3,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/Usermodel';
 
-// Register/Signup User
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { fullName, email, password, confirmPassword } = req.body;
 
-    // Validation
+    
     if (!fullName || !email || !password || !confirmPassword) {
       res.status(400).json({
         success: false,
@@ -26,7 +25,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    // Check if user already exists
+ 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(400).json({
@@ -35,12 +34,10 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       });
       return;
     }
-
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
+    
     const user = await User.create({
       fullName,
       email,
@@ -75,12 +72,11 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Login User
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    // Validation
+    
     if (!email || !password) {
       res.status(400).json({
         success: false,
@@ -89,7 +85,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Find user and include password
+   
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       res.status(401).json({
@@ -99,7 +95,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check password
+    
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       res.status(401).json({
@@ -109,7 +105,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -136,7 +131,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Get User Profile
+
 export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).userId; // From auth middleware

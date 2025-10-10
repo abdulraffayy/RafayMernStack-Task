@@ -35,9 +35,7 @@ export interface SingleNoteResponse {
   data: Note;
 }
 
-// Notes Service Functions
 const noteService = {
-  // Get all notes
   getAllNotes: async (): Promise<NotesResponse> => {
     try {
       const response = await apiClient.get<NotesResponse>('/notes');
@@ -49,8 +47,6 @@ const noteService = {
       };
     }
   },
-
-  // Get single note by ID
   getNoteById: async (id: string): Promise<SingleNoteResponse> => {
     try {
       const response = await apiClient.get<SingleNoteResponse>(`/notes/${id}`);
@@ -62,8 +58,6 @@ const noteService = {
       };
     }
   },
-
-  // Create new note
   createNote: async (data: CreateNoteData): Promise<SingleNoteResponse> => {
     try {
       const response = await apiClient.post<SingleNoteResponse>('/notes', data);
@@ -75,8 +69,6 @@ const noteService = {
       };
     }
   },
-
-  // Update note
   updateNote: async (id: string, data: UpdateNoteData): Promise<SingleNoteResponse> => {
     try {
       const response = await apiClient.put<SingleNoteResponse>(`/notes/${id}`, data);
@@ -88,8 +80,6 @@ const noteService = {
       };
     }
   },
-
-  // Delete note
   deleteNote: async (id: string): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await apiClient.delete<{ success: boolean; message: string }>(`/notes/${id}`);
@@ -101,8 +91,6 @@ const noteService = {
       };
     }
   },
-
-  // Search notes
   searchNotes: async (query: string): Promise<NotesResponse> => {
     try {
       const response = await apiClient.get<NotesResponse>(`/notes/search?q=${encodeURIComponent(query)}`);

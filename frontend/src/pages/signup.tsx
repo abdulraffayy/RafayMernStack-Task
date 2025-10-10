@@ -11,7 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import authService from "@/services/authService";
 
 interface FormData {
   fullName: string;
@@ -41,14 +42,16 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string>("");
+  const [apiSuccess, setApiSuccess] = useState<string>("");
   
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
   const validatePassword = (password: string): boolean => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    return passwordRegex.test(password);
+    // Minimum 6 characters - matching backend validation
+    return password.length >= 6;
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,8 +82,7 @@ const Signup = () => {
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
-      newErrors.password =
-        "Password must be at least 8 characters with uppercase, lowercase, and number";
+      newErrors.password = "Password must be at least 6 characters";
     }
 
    
@@ -98,6 +100,10 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Clear previous messages
+    setApiError("");
+    setApiSuccess("");
+
     if (!validateForm()) {
       return;
     }
@@ -105,17 +111,29 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Signup successful:", {
-        name: formData.fullName,
+      // Call the signup API
+      const response = await authService.signup({
+        fullName: formData.fullName,
         email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
       });
 
-      navigate("/login");
+      // Success!
+      console.log("Signup successful:", response);
+      setApiSuccess(response.message || "Account created successfully!");
+
+      // Wait 1.5 seconds to show success message, then redirect
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+
     } catch (error) {
       console.error("Signup error:", error);
-     
+      
+      // Handle error message
+      const errorMessage = (error as { message?: string }).message || "Something went wrong. Please try again.";
+      setApiError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -233,7 +251,24 @@ const Signup = () => {
                   {errors.confirmPassword}
                 </p>
               )}
-            </div>  
+            </div>
+
+            {/* API Error Message */}
+            {apiError && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg animate-in fade-in slide-in-from-top-2">
+                <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                <p className="text-sm text-red-600 dark:text-red-400">{apiError}</p>
+              </div>
+            )}
+
+            {/* API Success Message */}
+            {apiSuccess && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in slide-in-from-top-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <p className="text-sm text-green-600 dark:text-green-400">{apiSuccess}</p>
+              </div>
+            )}
+  
             <Button
               type="submit"
               className="w-full"
